@@ -32,7 +32,9 @@ def run_colmap(basedir, match_type):
             '--ImageReader.single_camera', '1',
             # '--SiftExtraction.use_gpu', '0',
     ]
+    print('=======================')
     print(' '.join(feature_extractor_args))
+    print('=======================')
     feat_output = ( subprocess.check_output(feature_extractor_args, universal_newlines=True) )
     logfile.write(feat_output)
     print('Features extracted')
@@ -41,7 +43,9 @@ def run_colmap(basedir, match_type):
         'colmap', match_type, 
             '--database_path', os.path.join(basedir, 'database.db'), 
     ]
+    print('=======================')
     print(' '.join(exhaustive_matcher_args))
+    print('=======================')
     match_output = ( subprocess.check_output(exhaustive_matcher_args, universal_newlines=True) )
     logfile.write(match_output)
     print('Features matched')
@@ -68,7 +72,9 @@ def run_colmap(basedir, match_type):
             '--Mapper.multiple_models', '0',
             '--Mapper.extract_colors', '0',
     ]
+    print('=======================')
     print(' '.join(mapper_args))
+    print('=======================')
     map_output = ( subprocess.check_output(mapper_args, universal_newlines=True) )
     logfile.write(map_output)
     logfile.close()
