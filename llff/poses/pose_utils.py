@@ -9,7 +9,8 @@ import llff.poses.colmap_read_model as read_model
 
 
 def load_colmap_data(realdir):
-    
+    # 返回值 poses, pts3d, perm 代表？
+
     camerasfile = os.path.join(realdir, 'sparse/0/cameras.bin')
     camdata = read_model.read_cameras_binary(camerasfile)
     
@@ -49,7 +50,8 @@ def load_colmap_data(realdir):
     
     # must switch to [-u, r, -t] from [r, -u, t], NOT [r, u, -t]
     poses = np.concatenate([poses[:, 1:2, :], poses[:, 0:1, :], -poses[:, 2:3, :], poses[:, 3:4, :], poses[:, 4:5, :]], 1)
-    
+
+    # 这三个值都是什么
     return poses, pts3d, perm
 
 
@@ -265,14 +267,17 @@ def gen_poses(basedir, match_type, factors=None):
         files_had = []
     if not all([f in files_had for f in files_needed]):
         print( 'Need to run COLMAP' )
+        # 运行colmap计算数据
         run_colmap(basedir, match_type)
     else:
         print('Don\'t need to run COLMAP')
         
     print( 'Post-colmap')
-    
+
+    # 读取colmap计算的结果数据
     poses, pts3d, perm = load_colmap_data(basedir)
-    
+
+    # 保存为npy文件
     save_poses(basedir, poses, pts3d, perm)
     
     if factors is not None:
