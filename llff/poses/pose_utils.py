@@ -11,6 +11,7 @@ import llff.poses.colmap_read_model as read_model
 def load_colmap_data(realdir):
     # 返回值 poses, pts3d, perm 代表？
 
+    # 相机参数，是否能用iPhone？
     camerasfile = os.path.join(realdir, 'sparse/0/cameras.bin')
     camdata = read_model.read_cameras_binary(camerasfile)
     
@@ -22,7 +23,7 @@ def load_colmap_data(realdir):
     h, w, f = cam.height, cam.width, cam.params[0]
     # w, h, f = factor * w, factor * h, factor * f
     hwf = np.array([h,w,f]).reshape([3,1])
-    
+
     imagesfile = os.path.join(realdir, 'sparse/0/images.bin')
     imdata = read_model.read_images_binary(imagesfile)
     
@@ -38,10 +39,12 @@ def load_colmap_data(realdir):
         t = im.tvec.reshape([3,1])
         m = np.concatenate([np.concatenate([R, t], 1), bottom], 0)
         w2c_mats.append(m)
-    
+
+    # camera-to-world
+    # world-to-camera
     w2c_mats = np.stack(w2c_mats, 0)
     c2w_mats = np.linalg.inv(w2c_mats)
-    
+
     poses = c2w_mats[:, :3, :4].transpose([1,2,0])
     poses = np.concatenate([poses, np.tile(hwf[..., np.newaxis], [1,1,poses.shape[-1]])], 1)
     
@@ -51,7 +54,13 @@ def load_colmap_data(realdir):
     # must switch to [-u, r, -t] from [r, -u, t], NOT [r, u, -t]
     poses = np.concatenate([poses[:, 1:2, :], poses[:, 0:1, :], -poses[:, 2:3, :], poses[:, 3:4, :], poses[:, 4:5, :]], 1)
 
-    # 这三个值都是什么
+    '''
+    这三个值都是什么
+    poses   
+    pts3d  （稀疏）？3d点云数据
+    perm    图片编号
+    6自由度摄影机位置，以及场景的近/远深度范围。
+    '''
     return poses, pts3d, perm
 
 
@@ -77,7 +86,7 @@ def save_poses(basedir, poses, pts3d, perm):
     print( 'Depth stats', valid_z.min(), valid_z.max(), valid_z.mean() )
     
     save_arr = []
-    for i in perm:
+    for i in perm:  # 每张图存一次
         vis = vis_arr[:, i]
         zs = zvals[:, i]
         zs = zs[vis==1]
@@ -274,7 +283,13 @@ def gen_poses(basedir, match_type, factors=None):
         
     print( 'Post-colmap')
 
-    # 读取colmap计算的结果数据
+    '''
+    读取colmap计算的结果数据
+    这三个值都是什么
+    poses   
+    pts3d  （稀疏）？3d点云数据
+    perm    图片编号
+    '''
     poses, pts3d, perm = load_colmap_data(basedir)
 
     # 保存为npy文件

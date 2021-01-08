@@ -28,6 +28,9 @@ def run_colmap(basedir, match_type):
 
     '''
     colmap feature_extractor --database_path /content/drive/My Drive/data/testscene3/database.db --image_path /content/drive/My Drive/data/testscene3/images --ImageReader.single_camera 1
+./colmap feature_extractor --database_path /Users/mac/Downloads/fern1/database.db --image_path /Users/mac/Downloads/fern1/images --ImageReader.single_camera 1
+feature_extractor，feature_importer：对一组图像执行特征提取或导入特征。
+feature_extractor, feature_importer: Perform feature extraction or import features for a set of images.
     '''
     feature_extractor_args = [
         'colmap', 'feature_extractor', 
@@ -45,6 +48,9 @@ def run_colmap(basedir, match_type):
 
     '''
     colmap exhaustive_matcher --database_path /content/drive/My Drive/data/testscene3/database.db
+./colmap exhaustive_matcher --database_path /Users/mac/Downloads/fern1/database.db
+exhaustive_matcher，vocab_tree_matcher，sequential_matcher， spatial_matcher，transitive_matcher，matches_importer：执行特征提取后进行特征匹配。
+exhaustive_matcher, vocab_tree_matcher, sequential_matcher, spatial_matcher, transitive_matcher, matches_importer: Perform feature matching after performing feature extraction.
     '''
     exhaustive_matcher_args = [
         'colmap', match_type, 
@@ -72,6 +78,9 @@ def run_colmap(basedir, match_type):
 
     '''
     colmap mapper --database_path /content/drive/My Drive/data/testscene3/database.db --image_path /content/drive/My Drive/data/testscene3/images --output_path /content/drive/My Drive/data/testscene3/sparse --Mapper.num_threads 16 --Mapper.init_min_tri_angle 4 --Mapper.multiple_models 0 --Mapper.extract_colors 0
+./colmap mapper --database_path /Users/mac/Downloads/fern1/database.db --image_path /Users/mac/Downloads/fern1/images --output_path /Users/mac/Downloads/fern1/sparse --Mapper.num_threads 12 --Mapper.init_min_tri_angle 4 --Mapper.multiple_models 0 --Mapper.extract_colors 0
+mapper：执行特征提取和匹配后，使用SfM稀疏地对数据集进行3D重建/映射。
+mapper: Sparse 3D reconstruction / mapping of the dataset using SfM after performing feature extraction and matching.
     '''
     mapper_args = [
         'colmap', 'mapper',
